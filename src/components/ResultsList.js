@@ -1,34 +1,57 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet } from "react-native";
-import { FlatList } from "react-native";
-import { Text } from "react-native";
 import { View } from "react-native";
+import ResultsDetail from "./ResultsDetail";
+import { TouchableOpacity } from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from '@expo/vector-icons'; 
 
 const ResultsList = (props) => {
+  const navigation = useNavigation();
+  const [isFavorite, setIsFavorite] = useState(false);
 
-    return (
-        <View>
-            <FlatList 
-            style={styles.result}
-            data={props.results} 
-            keyExtractor={(result) => result.title}
-            renderItem={(result) => {
-                return <Text >{result.item.title}</Text>
-            }}/>
-        </View>
-    )
+  const handleFavoritePress = () => {
+    setIsFavorite(!isFavorite);
+  };
+  
+  return (
+    <View style={styles.container}>
+      {props.results.map((result) => (
+        <TouchableOpacity
+          key={result.link}
+          onPress={() =>
+            navigation.navigate("WebContent", { link: result.link })
+          }
+          style={styles.resultItem}
+        >
+          <View style={styles.detailsContainer}>
+            <ResultsDetail result={result} />
 
+          </View>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
-    result: {
-        position: 'absolute',
-        width: 315,
-        height: 300,
-        left: 30,
-        top: 115
-    }
+  container: {
+    paddingHorizontal: 20,
+    paddingTop: 80,
+  },
+  resultItem: {
+    marginBottom: 20,
 
-})
+  },
+  detailsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  favoriteContainer: {
+    marginLeft: 10,
+    bottom: 15
+  },
+});
 
 export default ResultsList;
